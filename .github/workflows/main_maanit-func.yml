@@ -6,12 +6,17 @@ on:
       - main
   workflow_dispatch:
 
+permissions:
+  id-token: write    # ✅ Needed for Azure login with OIDC
+  contents: read     # ✅ Needed for checkout
+
 env:
   NODE_VERSION: '20.x'
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -25,22 +30,22 @@ jobs:
         run: |
           npm install --omit=dev
 
-      - name: Upload artifact
+      - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
-          name: functionapp
-          path: . # Everything at repo root
+          name: node-app
+          path: .
 
   deploy:
-    needs: build
     runs-on: ubuntu-latest
+    needs: build
+
     steps:
-      - name: Download artifact
+      - name: Download artifact from build job
         uses: actions/download-artifact@v4
         with:
-          name: functionapp
-          path: deployment
-
+          name: node-app
+      
       - name: Login to Azure
         uses: azure/login@v2
         with:
@@ -52,4 +57,5 @@ jobs:
         uses: Azure/functions-action@v1
         with:
           app-name: 'maanit-func'
-          package: './deployment' # 👈 FIXED: Deploy what was downloaded
+          slot-name: 'Production'
+          package: '.'
