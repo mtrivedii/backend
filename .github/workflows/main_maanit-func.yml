@@ -32,12 +32,12 @@ jobs:
       - name: Prune dev dependencies
         run: npm prune --production
 
-      # Zip ONLY backend files/folders at the root
+      # Zip ONLY backend files/folders at the root, including the config file
       - name: Create zip deployment package
         run: |
           zip -r function-app.zip \
             adminCheck scoreboard upload users \
-            host.json package.json package-lock.json \
+            host.json package.json package-lock.json staticwebapp.database.config.json \
             -x "node_modules/*" "node_modules/.cache/*" "*.git*" "test/*" ".github/*" ".vscode/*"
 
       - name: Upload build artifact
