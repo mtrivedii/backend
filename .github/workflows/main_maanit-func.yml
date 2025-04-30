@@ -26,18 +26,19 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
 
-      - name: Install dependencies and build
-        run: |
-          npm ci
-          # If you have a build step, run it here
-          # npm run build --if-present
+      - name: Install dependencies
+        run: npm ci
 
       - name: Prune dev dependencies
         run: npm prune --production
 
+      # Zip ONLY backend files/folders at the root
       - name: Create zip deployment package
         run: |
-          zip -r function-app.zip . -x "node_modules/.cache/*" "*.git*" "test/*"
+          zip -r function-app.zip \
+            adminCheck scoreboard upload users \
+            host.json package.json package-lock.json \
+            -x "node_modules/.cache/*" "*.git*" "test/*" ".github/*" ".vscode/*"
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
