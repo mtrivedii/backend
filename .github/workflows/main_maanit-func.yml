@@ -72,4 +72,4 @@ jobs:
       # Optional: Restart the function app after deployment to clear any stale state
       - name: Restart Function App
         run: |
-          az functionapp restart --name maanit-func --resource-group <your-resource-group>
+          az functionapp restart --name maanit-func --resource-group secure-app-rg
